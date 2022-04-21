@@ -1,0 +1,54 @@
+name: Sync branches
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: Source ref (branch or sha)
+        required: true
+        type: string
+      target:
+        description: Target branch
+        required: true
+        type: choice
+        options:
+          - stage-stable
+          - prod-beta
+          - prod-stable
+
+jobs:
+  check:
+    name: Check source and target validity
+    timeout-minutes: 1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.source }}
+
+      - name: Check ancestry
+        if: ${{ github.event.inputs.target == "prod-stable" }}
+        run: |
+          if ! git merge-base --is-ancestor refs/heads/prod-beta ${{ github.event.inputs.source }}; then
+            echo "Target is prod-stable and source ref isn't deployed in prod-beta"
+            exit 1
+          fi
+          if ! git merge-base --is-ancestor refs/heads/stage-stable ${{ github.event.inputs.source }}; then
+            echo "Target is prod-stable and source ref isn't deployed in stage-stable"
+            exit 1
+          fi
+
+  sync:
+    name: "Sync main to prod-beta"
+    needs: check
+    if: ${{ success() }}
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.source }}
+
+      - name: Sync
+        run: git push origin ${{ github.event.inputs.source }}:${{ github.event.inputs.target}}
