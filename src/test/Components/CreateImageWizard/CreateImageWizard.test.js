@@ -145,14 +145,14 @@ beforeAll(() => {
                 org_id: 5,
               },
             },
-          };
-        },
-      },
-      isBeta: () => {
-        return true;
-      },
-    },
-  };
+            isBeta: () => {
+                return true;
+            },
+            isProd: () => {
+                return true;
+            },
+        }
+    };
 });
 
 afterEach(() => {

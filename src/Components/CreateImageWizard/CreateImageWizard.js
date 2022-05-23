@@ -47,23 +47,23 @@ const onSave = (values) => {
       'server-url': 'subscription.rhsm.redhat.com',
       'base-url': 'https://cdn.redhat.com/',
     };
-  } else if (values['register-system'] === 'register-now') {
-    customizations.subscription = {
-      'activation-key': values['subscription-activation-key'],
-      insights: false,
-      organization: Number(values['subscription-organization-id']),
-      'server-url': 'subscription.rhsm.redhat.com',
-      'base-url': 'https://cdn.redhat.com/',
-    };
-  }
 
-  if (values['file-system-config-toggle'] === 'manual') {
-    customizations.filesystem = [];
-    for (let fsc of values['file-system-configuration']) {
-      customizations.filesystem.push({
-        mountpoint: fsc.mountpoint,
-        min_size: fsc.size * fsc.unit,
-      });
+    if (values['register-system'] === 'register-now-insights') {
+        customizations.subscription = {
+            'activation-key': values['subscription-activation-key'],
+            insights: true,
+            organization: Number(values['subscription-organization-id']),
+            'server-url': values['subscription-server-url'],
+            'base-url': values['subscription-base-url'],
+        };
+    } else if (values['register-system'] === 'register-now') {
+        customizations.subscription = {
+            'activation-key': values['subscription-activation-key'],
+            insights: false,
+            organization: Number(values['subscription-organization-id']),
+            'server-url': values['subscription-server-url'],
+            'base-url': values['subscription-base-url'],
+        };
     }
   }
 

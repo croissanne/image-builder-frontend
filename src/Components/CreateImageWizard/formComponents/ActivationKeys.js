@@ -21,14 +21,22 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
     getState()?.values?.['subscription-activation-key']
   );
 
-  useEffect(() => {
-    setIsLoading(true);
-    const data = api.getActivationKeys();
-    data.then((keys) => {
-      setActivationKeys(keys);
-      setIsLoading(false);
-    });
-  }, []);
+    useEffect(() => {
+        setIsLoading(true);
+        const data = api.getActivationKeys();
+        data.then(keys => {
+            setActivationKeys(keys);
+            setIsLoading(false);
+        });
+
+        if (insights.chrome.isProd()) {
+            change('subscription-server-url', 'subscription.rhsm.redhat.com');
+            change('subscription-base-url', 'https://cdn.redhat.com/');
+        } else {
+            change('subscription-server-url', 'subscription.rhsm.stage.redhat.com');
+            change('subscription-base-url', 'https://cdn.stage.redhat.com/');
+        }
+    }, []);
 
   const setActivationKey = (_, selection) => {
     selectActivationKey(selection);
