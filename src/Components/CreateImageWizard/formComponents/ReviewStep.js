@@ -112,6 +112,14 @@ const ReviewStep = () => {
             <TargetEnvOtherList />
           </TextContent>
         )}
+        {getState()?.values?.['target-environment']?.wsl && (
+          <TextContent>
+            <Text component={TextVariants.h3}>
+              Windows Subsystem for Linux (WSL)
+            </Text>
+            <TargetEnvOtherList />
+          </TextContent>
+        )}
       </ExpandableSection>
       <ExpandableSection
         toggleContent={'File system configuration'}
