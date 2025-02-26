@@ -23,6 +23,8 @@ function upload_artifacts {
     USER="$(whoami)"
     sudo chown -R "$USER:$USER" playwright-report
     mv playwright-report /tmp/artifacts/
+    sudo chown -R "$USER:$USER" /home/admin/.cache/cockpit-image-builder
+    cp -a /home/admin/.cache/cockpit-image-builder /tmp/artifacts/blueprints-cache
 }
 trap upload_artifacts EXIT
 
