@@ -1,14 +1,17 @@
 import { expect, test } from '@playwright/test';
 
 import {
-  loginCockpit,
+  configure,
+  login,
   ibFrame,
+  isHosted,
 } from './lib/lib';
+
+configure(test);
 
 test.describe('test', () => {
   test('create blueprint', async ({ page }) => {
-    await loginCockpit(page, 'admin', 'foobar');
-    // await enableComposer(page);
+    await login(page)
     const frame = await ibFrame(page);
 
     // image output
@@ -60,10 +63,12 @@ test.describe('test', () => {
   });
 
   test('edit blueprint', async ({ page }) => {
-    // package searching is really slow the first time
-    test.setTimeout(300000)
+    // package searching is really slow the first time in cockpit
+    if (!isHosted(page)) {
+      test.setTimeout(300000);
+    }
 
-    await loginCockpit(page, 'admin', 'foobar');
+    await login(page);
     const frame = await ibFrame(page);
     await frame.getByText('test-blueprint').click();
 
@@ -86,9 +91,7 @@ test.describe('test', () => {
   });
 
   test('build blueprint', async ({ page }) => {
-    // add time enough for depsolving
-    test.setTimeout(60 * 1000);
-    await loginCockpit(page, 'admin', 'foobar');
+    await login(page);
     const frame = await ibFrame(page);
     await frame.getByText('test-blueprint').click();
     await frame.getByTestId('blueprint-build-image-menu-option').click();
@@ -98,7 +101,7 @@ test.describe('test', () => {
   });
 
   test('delete blueprint', async ({ page }) => {
-    await loginCockpit(page, 'admin', 'foobar');
+    await login(page);
     const frame = await ibFrame(page);
     await frame.getByText('test-blueprint').click();
     await frame.getByTestId('blueprint-action-menu-toggle').click();
