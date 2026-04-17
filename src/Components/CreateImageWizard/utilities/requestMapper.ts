@@ -162,9 +162,8 @@ export const mapRequestFromState = (
     metadata: selectMetadata(state),
     description: selectBlueprintDescription(state),
     distribution:
-      // we want to make sure image-source is defined
-      // if it isn't, then keep the original distro
-      isImageMode && imageSource ? IMAGE_MODE : selectDistribution(state),
+      // bootc and distribution are mutually exclusive
+      isImageMode && imageSource ? undefined : selectDistribution(state),
     bootc:
       isImageMode && imageSource
         ? {
@@ -515,7 +514,7 @@ function commonRequestToState(
         },
     partitioning_mode: request.customizations.partitioning_mode,
     architecture: arch,
-    distribution: getLatestRelease(request.distribution),
+    distribution: getLatestRelease(request.distribution ?? IMAGE_MODE),
     imageSource: 'bootc' in request ? request.bootc?.reference : undefined,
     imageTypes: request.image_requests.map((image) => image.image_type),
     azure: azureTargetOptions(azureUploadOptions),
@@ -604,10 +603,10 @@ export const mapRequestToState = (
     },
     registration: {
       registrationType: getRegistrationType(request),
-      activationKey: isRhel(request.distribution)
+      activationKey: isRhel(request.distribution ?? '')
         ? request.customizations.subscription?.['activation-key']
         : undefined,
-      orgId: isRhel(request.distribution)
+      orgId: isRhel(request.distribution ?? '')
         ? request.customizations.subscription?.['organization']?.toString()
         : undefined,
       satelliteRegistration: {
@@ -771,7 +770,7 @@ const getRegistrationType = (
   const distribution = request.distribution;
   const files = request.customizations.files;
 
-  if (subscription && isRhel(distribution)) {
+  if (subscription && isRhel(distribution ?? '')) {
     if (subscription.rhc) {
       return 'register-now-rhc';
     } else {

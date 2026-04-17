@@ -87,7 +87,7 @@ export type ComposerCreateBlueprintRequest = Omit<
   CreateBlueprintRequest,
   'image_requests' | 'distribution'
 > & {
-  distribution: Distributions | 'image-mode';
+  distribution?: Distributions | 'image-mode' | undefined;
   image_requests: ComposerImageRequest[];
   bootc?: Bootc | undefined;
 };

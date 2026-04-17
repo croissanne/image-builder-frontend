@@ -160,7 +160,7 @@ const getCloudConfigs = async () => {
 
 export const toComposerComposeRequest = (
   blueprint: ComposerCreateBlueprintRequest,
-  distribution: string,
+  distribution: string | undefined,
   image_requests: ComposerImageRequest[],
 ): ComposeRequest => {
   // subscription, users & openscap are the only options

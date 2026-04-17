@@ -71,6 +71,7 @@ import { AwsTarget, Target } from './Target';
 import {
   AMPLITUDE_MODULE_NAME,
   AWS_S3_EXPIRATION_TIME_IN_HOURS,
+  IMAGE_MODE,
   OCI_STORAGE_EXPIRATION_TIME_IN_DAYS,
   PAGINATION_LIMIT,
   PAGINATION_OFFSET,
@@ -662,7 +663,7 @@ const Row = ({
               )}
             </p>
           ) : (
-            <Release release={compose.request.distribution} />
+            <Release release={compose.request.distribution ?? IMAGE_MODE} />
           )}
         </Td>
         <Td dataLabel='Target'>
