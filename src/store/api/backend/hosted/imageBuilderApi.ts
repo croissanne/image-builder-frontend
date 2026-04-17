@@ -186,7 +186,7 @@ export type GetDistributionsApiResponse =
    */ DistributionsResponse;
 export type GetDistributionsApiArg = {
   /** Kind of distributions to return. When set to 'bootc', returns bootc/image-mode
-    distributions (each with id, name, type, arch, and image). Defaults to classic distributions.
+    distributions (each with distro, name, type, arch, and reference). Defaults to classic distributions.
      */
   kind?: DistributionKind;
   /** Filter bootc distributions by distribution name. Only applies when kind=bootc.
@@ -352,13 +352,12 @@ export type DistributionItem = {
   name: string;
 };
 export type BootcDistributionItem = {
-  id: string;
   distro: string;
   name: string;
   type: string;
   arch: string;
-  /** part of the container image name used as the base for composing */
-  image_name: string;
+  /** Derived container image reference, only references listed in the bootc distributions list are allowed. */
+  reference: string;
 };
 export type DistributionsResponse = (
   | DistributionItem
@@ -464,7 +463,7 @@ export type CreateBlueprintResponse = {
   id: string;
 };
 export type BootcBody = {
-  /** Image name from the bootc distributions list. Must match an image_name
+  /** Image name from the bootc distributions list. Must match a reference
     returned by GET /distributions?kind=bootc.
      */
   reference: string;
@@ -893,7 +892,7 @@ export type BlueprintMetadata = {
 export type CreateBlueprintRequest = {
   name: string;
   description?: string | undefined;
-  distribution: Distributions;
+  distribution?: Distributions | undefined;
   bootc?: BootcBody | undefined;
   /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
    */
@@ -914,7 +913,7 @@ export type BlueprintResponse = {
   name: string;
   description: string;
   lint: BlueprintLint;
-  distribution: Distributions;
+  distribution?: Distributions | undefined;
   bootc?: BootcBody | undefined;
   /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
    */
@@ -924,7 +923,7 @@ export type BlueprintResponse = {
 export type BlueprintExportResponse = {
   name: string;
   description: string;
-  distribution: Distributions;
+  distribution?: Distributions | undefined;
   bootc?: BootcBody | undefined;
   customizations: Customizations;
   metadata: BlueprintMetadata;
@@ -942,7 +941,7 @@ export type ComposeResponse = {
 };
 export type ClientId = "api" | "ui" | "mcp";
 export type ComposeRequest = {
-  distribution: Distributions;
+  distribution?: Distributions | undefined;
   bootc?: BootcBody | undefined;
   image_name?: string | undefined;
   image_description?: string | undefined;
