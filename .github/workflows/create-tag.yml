@@ -5,7 +5,13 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to tag. Useful for making the first "dot" release from a rhel-x.y branch.'
+        description: |
+          Version to tag. Use when creating dot-releases (e.g. v94 -> v94.1, v94.1 -> v94.2).
+          Leave empty for major (v94 -> v95).
+        required: false
+        default: ""
+      branch:
+        description: 'Branch to create the release on.'
         required: false
         default: ""
   schedule:
@@ -21,10 +27,11 @@ jobs:
         shell: bash
 
       - name: Upstream tag
-        uses: osbuild/release-action@create-tag
+        uses: croissanne/release-action@create-tag
         if: ${{ env.WEEK == 'odd' || github.event_name != 'schedule' }}
         with:
           token: "${{ secrets.SCHUTZBOT_GITHUB_ACCESS_TOKEN }}"
           username: "imagebuilder-bot"
           email: "imagebuilder-bots+imagebuilder-bot@redhat.com"
           version: ${{ github.event.inputs.version }}
+          base_branch: ${{ inputs.branch || 'main' }}
